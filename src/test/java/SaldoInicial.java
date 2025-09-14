@@ -6,11 +6,18 @@ import org.junit.jupiter.api.Test;
 import com.example.DigitalWallet;
 
 class SaldoInicial {
-        void deveConfigurarSaldoInicialCorreto() {
-            
-        }
 
-        void deveLancarExcecaoParaSaldoInicialNegativo() {
-            
-        }
+    @Test
+    void deveConfigurarSaldoInicialCorreto() {
+        DigitalWallet dw = new DigitalWallet("John Doe", 0);
+
+        assertEquals(0, dw.getBalance());
     }
+
+    @Test
+    void deveLancarExcecaoParaSaldoInicialNegativo() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new DigitalWallet("John Doe", -6);
+        });
+    }
+}

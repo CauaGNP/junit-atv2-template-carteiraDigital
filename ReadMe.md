@@ -4,15 +4,16 @@
 
 Testar funcionalidades de uma Carteira Digital (e-wallet) usando JUnit 5, cobrindo operações de depósito, pagamento e estorno, além de regras de verificação de conta (KYC) e bloqueio. O foco é exercitar:
 
-- ```assumeTrue```/```assumeFalse``` (pré-condições contextuais),
-- ```assertThrows``` (erros de regra/entrada),
-- testes parametrizados (```@ParameterizedTest``` com ```@ValueSource```, ```@CsvSource``` e ```@MethodSource```).
+- `assumeTrue`/`assumeFalse` (pré-condições contextuais),
+- `assertThrows` (erros de regra/entrada),
+- testes parametrizados (`@ParameterizedTest` com `@ValueSource`, `@CsvSource` e `@MethodSource`).
 
 ## Classe sob teste: DigitalWallet
 
 A classe representa uma carteira digital simples.
 
 ### API esperada
+
 ```java
 public class DigitalWallet {
     public DigitalWallet(String owner, double initialBalance) { ... }
@@ -31,62 +32,64 @@ public class DigitalWallet {
 }
 
 ```
+
 ## Regras
 
-1. Saldo inicial deve ser ≥ 0. Saldo negativo no construtor deve lançar ```IllegalArgumentException```.
+1. Saldo inicial deve ser ≥ 0. Saldo negativo no construtor deve lançar `IllegalArgumentException`.
 
-2. Depósito: apenas ```amount > 0```. Caso contrário, lançar ```IllegalArgumentException```.
+2. Depósito: apenas `amount > 0`. Caso contrário, lançar `IllegalArgumentException`.
 
 3. Pagamento (pay):
 
-    - Requer carteira verificada e não bloqueada.
-    - ```amount > 0```.
-    - Retorna true se houver saldo suficiente e debita; false se saldo insuficiente.
+   - Requer carteira verificada e não bloqueada.
+   - `amount > 0`.
+   - Retorna true se houver saldo suficiente e debita; false se saldo insuficiente.
 
 4. Estorno (refund):
 
-    - Requer carteira verificada e não bloqueada.
-    - ```amount > 0```. Caso contrário, lançar ```IllegalArgumentException```.
+   - Requer carteira verificada e não bloqueada.
+   - `amount > 0`. Caso contrário, lançar `IllegalArgumentException`.
 
 ### Requisitos de Teste (o que implementar)
-1) Saldo Inicial (básico)
 
-    - Verifique que o saldo inicial é configurado corretamente.
-    - Caso de erro: tentar criar carteira com saldo inicial negativo deve lançar ```IllegalArgumentException``` (```assertThrows```).
+1. Saldo Inicial (básico)
 
-2) Depósito
+   - Verifique que o saldo inicial é configurado corretamente.
+   - Caso de erro: tentar criar carteira com saldo inicial negativo deve lançar `IllegalArgumentException` (`assertThrows`).
 
-    - Atualiza corretamente o saldo para valores válidos (use ```@ParameterizedTest``` com ```@ValueSource(doubles = {...})```).
-    - Depósito com ```0``` ou valor negativo deve lançar ```IllegalArgumentException``` (```assertThrows```).
+2. Depósito
 
-3) Pagamento (pay)
+   - Atualiza corretamente o saldo para valores válidos (use `@ParameterizedTest` com `@ValueSource(doubles = {...})`).
+   - Depósito com `0` ou valor negativo deve lançar `IllegalArgumentException` (`assertThrows`).
 
-    - Pré-condição com ```assumeTrue```: assuma que a carteira está verificada e não bloqueada para os testes “felizes”.
-    - Caso feliz: pagamentos válidos debitam saldo e retornam true (use ```@CsvSource``` com pares ```saldoInicial,valorPagamento,resultadoEsperado```).
-    - Saldo insuficiente retorna ```false``` e não altera saldo.
-    - Casos de erro com ```assertThrows```: pagamento com valor ≤ 0 deve lançar exceção.
+3. Pagamento (pay)
 
-4) Estorno (refund)
+   - Pré-condição com `assumeTrue`: assuma que a carteira está verificada e não bloqueada para os testes “felizes”.
+   - Caso feliz: pagamentos válidos debitam saldo e retornam true (use `@CsvSource` com pares `saldoInicial,valorPagamento,resultadoEsperado`).
+   - Saldo insuficiente retorna `false` e não altera saldo.
+   - Casos de erro com `assertThrows`: pagamento com valor ≤ 0 deve lançar exceção.
 
-    - Use ```assumeTrue``` para exigir carteira verificada e não bloqueada.
-    - Estorno válido (```amount > 0```) aumenta o saldo.
-    - ```assertThrows``` ao estornar 0 ou negativo.
+4. Estorno (refund)
 
-5) Estados da Carteira (verificada/bloqueada)
+   - Use `assumeTrue` para exigir carteira verificada e não bloqueada.
+   - Estorno válido (`amount > 0`) aumenta o saldo.
+   - `assertThrows` ao estornar 0 ou negativo.
 
-    - ```assumeFalse``` / ```assumeTrue``` para pular cenários inválidos:
-        - Se a carteira não estiver verificada, ```pay``` e ```refund``` devem lançar ```IllegalStateException```.
-        - Se a carteira estiver bloqueada, ```pay``` e ```refund``` devem lançar ```IllegalStateException```.
+5. Estados da Carteira (verificada/bloqueada)
+
+   - `assumeFalse` / `assumeTrue` para pular cenários inválidos:
+     - Se a carteira não estiver verificada, `pay` e `refund` devem lançar `IllegalStateException`.
+     - Se a carteira estiver bloqueada, `pay` e `refund` devem lançar `IllegalStateException`.
 
 ### Dicas de Parametrização
 
-- ```@ValueSource(doubles = {10.0, 0.01, 999.99})``` para depósitos válidos.
-- ```@CsvSource({ "100.0, 30.0, true", "50.0, 80.0, false", "10.0, 10.0, true" })``` para pagamentos.
-- ```@MethodSource``` para gerar combinações mais ricas (ex.: múltiplos estornos em sequência).
+- `@ValueSource(doubles = {10.0, 0.01, 999.99})` para depósitos válidos.
+- `@CsvSource({ "100.0, 30.0, true", "50.0, 80.0, false", "10.0, 10.0, true" })` para pagamentos.
+- `@MethodSource` para gerar combinações mais ricas (ex.: múltiplos estornos em sequência).
 
 ## Critérios de Avaliação
 
-- Uso correto de ```assumeTrue```/```assumeFalse``` para pré-condições (verificada/não bloqueada).
-- Uso de ```assertThrows``` para entradas inválidas e estados inválidos.
-- Cobertura com Parameterized Tests (```@ValueSource```, ```@CsvSource``` e pelo menos um ```@MethodSource```).
+- Uso correto de `assumeTrue`/`assumeFalse` para pré-condições (verificada/não bloqueada).
+- Uso de `assertThrows` para entradas inválidas e estados inválidos.
+- Cobertura com Parameterized Tests (`@ValueSource`, `@CsvSource` e pelo menos um `@MethodSource`).
 - Clareza na organização e nomes descritivos.

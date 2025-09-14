@@ -6,15 +6,22 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.example.DigitalWallet;
 
-
 class Deposito {
-        
-        void deveDepositarValoresValidos(double amount) {
-            
-        }
 
-        
-        void deveLancarExcecaoParaDepositoInvalido(double amount) {
-            
-        }
+    @ParameterizedTest
+    @ValueSource(doubles = { 90, 10, 59 })
+    void deveDepositarValoresValidos(double amount) {
+
+        DigitalWallet dw = new DigitalWallet("John Doe", 0);
+        dw.deposit(amount);
+        assertEquals(amount, dw.getBalance());
     }
+
+    @ParameterizedTest
+    @ValueSource(doubles = { -90 })
+    void deveLancarExcecaoParaDepositoInvalido(double amount) {
+
+        DigitalWallet dw = new DigitalWallet("John Doe", 0);
+        assertThrows(IllegalArgumentException.class, () -> dw.deposit(amount));
+    }
+}
