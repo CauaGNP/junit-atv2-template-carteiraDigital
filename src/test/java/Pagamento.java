@@ -25,11 +25,13 @@ public class Pagamento {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = { 110, 220 })
+    @ValueSource(doubles = { 0 })
     void deveLancarExcecaoParaPagamentoInvalido(double valor) {
         DigitalWallet dw = new DigitalWallet("John Doe", 100);
+        dw.verify();
+        assumeTrue(dw.isVerified(), "Erro!! A conta não é verificada.");
 
-        assertThrows(IllegalStateException.class, () -> dw.pay(valor));
+        assertThrows(IllegalArgumentException.class, () -> dw.pay(valor));
         assertEquals(100, dw.getBalance());
     }
 
