@@ -25,7 +25,7 @@ public class Pagamento {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = { 0 })
+    @ValueSource(doubles = { 0, -5 })
     void deveLancarExcecaoParaPagamentoInvalido(double valor) {
         DigitalWallet dw = new DigitalWallet("John Doe", 100);
         dw.verify();
