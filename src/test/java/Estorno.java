@@ -40,17 +40,8 @@ class Estorno {
 
     @Test
     void deveLancarSeNaoVerificadaOuBloqueada() {
-        DigitalWallet dw = new DigitalWallet("John Doe", 20);
-        dw.lock();
-        dw.verify();
+        DigitalWallet dw = new DigitalWallet("John Doe", 1000);
 
-        // Aqui a conta está bloqueada e verificada;
-        assertThrows(IllegalStateException.class, () -> dw.pay(2));
-
-        dw.lock();
-        dw.verify();
-
-        // Já aqui a conta não está bloqueada, mas, não está verificada;
-        assertThrows(IllegalStateException.class, () -> dw.pay(2));
+        assertThrows(IllegalStateException.class, () -> dw.refund(10));
     }
 }
